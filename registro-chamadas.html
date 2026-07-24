@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro de Chamadas — Painel</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: #101214;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .wrap { width: 100%; max-width: 720px; }
+  .window {
+    background: #1b1e21;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 0.5px solid #33383c;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  }
+  .titlebar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px; background: #202327; border-bottom: 0.5px solid #33383c;
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .titlebar span.label { color: #c7ccd1; font-size: 13px; margin-left: 8px; }
+  .body-row { display: flex; min-height: 460px; }
+  .sidebar {
+    width: 160px; background: #202327; border-right: 0.5px solid #33383c;
+    padding: 14px 0; flex-shrink: 0;
+  }
+  .sidebar-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em;
+    color: #6b7075; margin: 0 8px 6px;
+  }
+  .nav-btn {
+    width: calc(100% - 16px); margin: 0 8px 4px; text-align: left;
+    background: transparent; border: none; color: #9aa0a6;
+    padding: 9px 10px; border-radius: 6px; font-size: 13px;
+    display: flex; align-items: center; gap: 8px; cursor: pointer;
+  }
+  .nav-btn:hover { background: #262a2e; }
+  .nav-btn.active { background: #2c3136; color: #e5e8eb; }
+  .main { flex: 1; padding: 18px 20px; color: #e5e8eb; }
+  label { font-size: 11px; color: #9aa0a6; display: block; margin-bottom: 4px; }
+  input, select {
+    width: 100%; background: #16181a; border: 0.5px solid #33383c; color: #e5e8eb;
+    border-radius: 6px; padding: 8px 10px; font-size: 13px; font-family: inherit;
+  }
+  input:focus, select:focus { outline: none; border-color: #3ea86b; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field-full { grid-column: span 2; }
+  button.action {
+    cursor: pointer; border-radius: 6px; padding: 9px 10px; font-size: 13px;
+    background: #262a2e; border: 0.5px solid #33383c; color: #e5e8eb;
+  }
+  button.primary { background: #2f7a52; border: 0.5px solid #3ea86b; color: #fff; }
+  .hist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .hist-title { font-size: 14px; font-weight: 500; margin: 0; }
+  .filters-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .filters-row select { flex: 1; }
+  .btn-clear { width: auto; flex-shrink: 0; }
+  .list { display: flex; flex-direction: column; gap: 6px; max-height: 280px; overflow-y: auto; }
+  .call-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: #202327; border-radius: 6px; }
+  .call-name { font-size: 13px; margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .call-meta { font-size: 11px; color: #9aa0a6; margin: 0; font-family: monospace; }
+  .empty { font-size: 13px; color: #9aa0a6; text-align: center; padding: 1.5rem 0; }
+  .form-note { font-size: 11px; color: #6b7075; margin: 10px 0 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="window">
+    <div class="titlebar">
+      <span class="dot" style="background:#e2554e;"></span>
+      <span class="dot" style="background:#e8b83c;"></span>
+      <span class="dot" style="background:#3ea86b;"></span>
+      <span class="label">Registro de Chamadas — Painel</span>
+    </div>
+
+    <div class="body-row">
+      <div class="sidebar">
+        <p class="sidebar-label">Canal</p>
+        <button id="nav-todos" class="nav-btn canal-btn" data-canal=""><i class="ti ti-apps"></i>Todos</button>
+        <button id="nav-tel" class="nav-btn canal-btn" data-canal="Telefone"><i class="ti ti-phone"></i>Telefone</button>
+        <button id="nav-whats" class="nav-btn canal-btn" data-canal="WhatsApp"><i class="ti ti-brand-whatsapp"></i>WhatsApp</button>
+      </div>
+
+      <div class="main">
+
+        <div id="view-hist" style="display:none;">
+          <div class="hist-header">
+            <p id="hist-titulo" class="hist-title">Histórico de chamadas</p>
+          </div>
+          <div class="grid2" style="margin-bottom:8px;">
+            <div><label>De</label><input type="date" id="filtro-de"></div>
+            <div><label>Até</label><input type="date" id="filtro-ate"></div>
+          </div>
+          <div class="filters-row">
+            <select id="filtro-status">
+              <option value="">Todos os status</option>
+              <option value="completa">Completas</option>
+              <option value="perdida">Perdidas</option>
+            </select>
+            <button id="btn-limpar" class="action btn-clear"><i class="ti ti-x"></i></button>
+          </div>
+          <div id="lista" class="list"></div>
+        </div>
+
+        <div id="view-form" style="display:none;">
+          <p style="font-size:14px; font-weight:500; margin:0 0 14px;">Preencha os dados da chamada</p>
+          <div class="grid2">
+            <div><label>Data</label><input type="date" id="f-data"></div>
+            <div><label>Hora</label><input type="time" id="f-hora"></div>
+            <div class="field-full"><label>Nome ou número</label><input type="text" id="f-nome" placeholder="Maria Silva ou (83) 99999-0000"></div>
+            <div><label>Canal</label>
+              <select id="f-canal"><option value="Telefone">Telefone</option><option value="WhatsApp">WhatsApp</option></select>
+            </div>
+            <div><label>Status</label>
+              <select id="f-status"><option value="completa">Completa</option><option value="perdida">Perdida</option></select>
+            </div>
+            <div id="f-duracao-wrap"><label>Duração (mm:ss)</label><input type="text" id="f-duracao" placeholder="03:20"></div>
+          </div>
+          <p class="form-note">Esse cadastro é feito uma única vez. Depois de registrar, só será possível visualizar.</p>
+          <button id="btn-add" class="action primary" style="margin-top:10px; width:100%;"><i class="ti ti-check"></i> Registrar chamada</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var STORAGE_KEY = 'registro_chamadas_v1';
+  var registros = [];
+  var canalAtivo = '';
+
+  function fmtData(d){ if(!d) return ''; var p=d.split('-'); return p.length===3 ? p[2]+'/'+p[1]+'/'+p[0] : d; }
+
+  function setActive(id){
+    document.querySelectorAll('.canal-btn').forEach(function(b){ b.classList.remove('active'); });
+    document.getElementById(id).classList.add('active');
+  }
+  function mostrar(id){
+    document.getElementById('view-hist').style.display = id==='hist' ? 'block' : 'none';
+    document.getElementById('view-form').style.display = id==='form' ? 'block' : 'none';
+  }
+
+  document.querySelectorAll('.canal-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      canalAtivo = btn.getAttribute('data-canal');
+      setActive(btn.id);
+      document.getElementById('hist-titulo').textContent = canalAtivo ? 'Histórico — ' + canalAtivo : 'Histórico de chamadas';
+      mostrar('hist');
+      render();
+    });
+  });
+
+  document.getElementById('f-status').addEventListener('change', function(){
+    document.getElementById('f-duracao-wrap').style.display = this.value==='perdida' ? 'none' : 'block';
+  });
+
+  function carregar(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      registros = raw ? JSON.parse(raw) : [];
+    }catch(e){ registros = []; }
+
+    if(registros.length === 0){
+      document.getElementById('f-data').valueAsDate = new Date();
+      mostrar('form');
+    } else {
+      setActive('nav-todos');
+      mostrar('hist');
+      render();
+    }
+  }
+  function salvar(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(registros)); }catch(e){}
+  }
+
+  document.getElementById('btn-add').addEventListener('click', function(){
+    var nome = document.getElementById('f-nome').value.trim();
+    var data = document.getElementById('f-data').value;
+    if(!nome || !data){ document.getElementById('f-nome').focus(); return; }
+    var status = document.getElementById('f-status').value;
+    registros.unshift({
+      id: Date.now(),
+      data: data,
+      hora: document.getElementById('f-hora').value,
+      nome: nome,
+      canal: document.getElementById('f-canal').value,
+      status: status,
+      duracao: status==='perdida' ? '' : document.getElementById('f-duracao').value.trim()
+    });
+    salvar();
+    setActive('nav-todos');
+    mostrar('hist');
+    render();
+  });
+
+  document.getElementById('btn-limpar').addEventListener('click', function(){
+    document.getElementById('filtro-de').value='';
+    document.getElementById('filtro-ate').value='';
+    document.getElementById('filtro-status').value='';
+    canalAtivo=''; setActive('nav-todos'); document.getElementById('hist-titulo').textContent='Histórico de chamadas';
+    render();
+  });
+  ['filtro-de','filtro-ate','filtro-status'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', render);
+  });
+
+  function render(){
+    var de = document.getElementById('filtro-de').value;
+    var ate = document.getElementById('filtro-ate').value;
+    var fs = document.getElementById('filtro-status').value;
+
+    var filtrados = registros.filter(function(r){
+      if(de && r.data < de) return false;
+      if(ate && r.data > ate) return false;
+      if(canalAtivo && r.canal !== canalAtivo) return false;
+      if(fs && r.status !== fs) return false;
+      return true;
+    });
+
+    var lista = document.getElementById('lista');
+    if(filtrados.length===0){
+      lista.innerHTML = '<p class="empty">Nenhuma chamada encontrada.</p>';
+      return;
+    }
+    lista.innerHTML = filtrados.map(function(r){
+      var iconeCanal = r.canal==='WhatsApp' ? 'ti-brand-whatsapp' : 'ti-phone';
+      var statusTxt = r.status==='perdida' ? 'Perdida' : (r.duracao || 'Completa');
+      var corStatus = r.status==='perdida' ? '#e2554e' : '#9aa0a6';
+      return '<div class="call-item">'+
+        '<i class="ti '+iconeCanal+'" style="font-size:15px; color:#3ea86b;"></i>'+
+        '<div style="flex:1; min-width:0;">'+
+          '<p class="call-name">'+escapeHtml(r.nome)+'</p>'+
+          '<p class="call-meta">'+fmtData(r.data)+(r.hora?' • '+r.hora:'')+'</p>'+
+        '</div>'+
+        '<span style="font-size:12px; color:'+corStatus+'; white-space:nowrap;">'+statusTxt+'</span>'+
+        '</div>';
+    }).join('');
+  }
+
+  function escapeHtml(s){
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  carregar();
+})();
+</script>
+</body>
+</html>
