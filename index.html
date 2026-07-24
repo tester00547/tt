@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Registro de Chamadas — Painel</title>
+<title>UltData for Android - Recuperar Dados do WhatsApp</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
 <style>
   * { box-sizing: border-box; }
   body {
     margin: 0;
     min-height: 100vh;
-    background: #101214;
+    background: #F4F5F7;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -19,7 +19,7 @@
   }
   .wrap { width: 100%; max-width: 720px; }
   .window {
-    background: #1b1e21;
+    background: #FFFFFF;
     border-radius: 10px;
     overflow: hidden;
     border: 0.5px solid #33383c;
@@ -27,13 +27,13 @@
   }
   .titlebar {
     display: flex; align-items: center; gap: 8px;
-    padding: 10px 14px; background: #202327; border-bottom: 0.5px solid #33383c;
+    padding: 10px 14px; background:#2DBE6C; border-bottom: 0.5px solid #33383c;
   }
   .dot { width: 10px; height: 10px; border-radius: 50%; }
-  .titlebar span.label { color: #c7ccd1; font-size: 13px; margin-left: 8px; }
+  .titlebar span.label { color: #FFFFFF; font-size: 13px; margin-left: 8px; }
   .body-row { display: flex; min-height: 460px; }
   .sidebar {
-    width: 160px; background: #202327; border-right: 0.5px solid #33383c;
+    width: 160px; background: #F4F5F7; border-right: 0.5px solid #33383c;
     padding: 14px 0; flex-shrink: 0;
   }
   .sidebar-label {
@@ -42,16 +42,16 @@
   }
   .nav-btn {
     width: calc(100% - 16px); margin: 0 8px 4px; text-align: left;
-    background: transparent; border: none; color: #9aa0a6;
+    background: transparent; border: none; color: #8C939D;
     padding: 9px 10px; border-radius: 6px; font-size: 13px;
     display: flex; align-items: center; gap: 8px; cursor: pointer;
   }
   .nav-btn:hover { background: #262a2e; }
-  .nav-btn.active { background: #2c3136; color: #e5e8eb; }
+  .nav-btn.active { background: #32D379; color: #FFFFFF; }
   .main { flex: 1; padding: 18px 20px; color: #e5e8eb; }
   label { font-size: 11px; color: #9aa0a6; display: block; margin-bottom: 4px; }
   input, select {
-    width: 100%; background: #16181a; border: 0.5px solid #33383c; color: #e5e8eb;
+    width: 100%; background: #FFFFFF; border: 1px solid #DADDE3; color: #333333;
     border-radius: 6px; padding: 8px 10px; font-size: 13px; font-family: inherit;
   }
   input:focus, select:focus { outline: none; border-color: #3ea86b; }
@@ -59,7 +59,7 @@
   .field-full { grid-column: span 2; }
   button.action {
     cursor: pointer; border-radius: 6px; padding: 9px 10px; font-size: 13px;
-    background: #262a2e; border: 0.5px solid #33383c; color: #e5e8eb;
+    background: #EAF8F1; border: 1px solid #D6EEDD; color: #333333;
   }
   button.primary { background: #2f7a52; border: 0.5px solid #3ea86b; color: #fff; }
   .hist-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
@@ -82,7 +82,7 @@
       <span class="dot" style="background:#e2554e;"></span>
       <span class="dot" style="background:#e8b83c;"></span>
       <span class="dot" style="background:#3ea86b;"></span>
-      <span class="label">Registro de Chamadas — Painel</span>
+      <span class="label">UltData for Android - Recuperar Dados do WhatsApp</span>
     </div>
 
     <div class="body-row">
