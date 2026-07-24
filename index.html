@@ -261,7 +261,21 @@
     return d.innerHTML;
   }
 
-  carregar();
+ 
+document.getElementById("tituloApp").addEventListener("dblclick", function () {
+
+  document.getElementById("f-data").valueAsDate = new Date();
+  document.getElementById("f-hora").value = "";
+  document.getElementById("f-nome").value = "";
+  document.getElementById("f-canal").value = "Telefone";
+  document.getElementById("f-status").value = "completa";
+  document.getElementById("f-duracao").value = "";
+
+  document.getElementById("f-duracao-wrap").style.display = "block";
+
+  mostrar("form");
+}); 
+ carregar();
 })();
 </script>
 </body>
